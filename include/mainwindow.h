@@ -7,7 +7,7 @@
 #include <QString>
 #include <QVector>
 #include <QDebug>
-#include "place.h"
+#include "include/place.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,9 +24,10 @@ public:
 private:
 
     Ui::MainWindow *ui;
-    QVector<Place> agences;
+    QVector<Place> agencies;
+    QVector<Place> cities;
 
-    void openFile(QString url);
+    void loadFile(QString url, QVector<Place>);
 
 };
 

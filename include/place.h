@@ -2,7 +2,7 @@
 #define PLACE_H
 
 #include <QStringList>
-#include "Coords.h"
+#include "include/coords.h"
 
 class Place
 {

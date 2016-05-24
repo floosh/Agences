@@ -12,12 +12,13 @@ TARGET = Projet_agences
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    place.cpp
+SOURCES += src/main.cpp \
+    src/mainwindow.cpp \
+    src/place.cpp
 
-HEADERS  += mainwindow.h \
-    place.h \
-    Coords.h
+HEADERS  += \
+    include/mainwindow.h \
+    include/place.h \
+    include/coords.h
 
-FORMS    += mainwindow.ui
+FORMS    += src/mainwindow.ui
