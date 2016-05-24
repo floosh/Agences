@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     loadFile("Ouvrir la liste des villes", cities);
     loadFile("Ouvrir une liste d'agences", agencies);
 
+
 }
 
 MainWindow::~MainWindow()
@@ -29,10 +30,11 @@ void MainWindow::loadFile(QString title, QVector<Place> places) {
         QString line = stream.readLine();
         QStringList fields = line.split(";");
 
+        QString name = fields[0];
         int value = fields[4].toInt();
         Coords coords = {fields[2].toFloat(), fields[3].toFloat()};
 
-        places.push_back(Place(value, coords));
+        places.push_back(Place(name,value, coords));
         qDebug() << "loaded: " << fields << endl;
     }
 

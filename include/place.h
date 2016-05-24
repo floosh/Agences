@@ -9,8 +9,9 @@ class Place
 public:
 
     Place();
-    Place(int, Coords);
+    Place(QString, int, Coords);
 
+    QString name;
     int count;
     Coords coords;
 

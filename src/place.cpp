@@ -1,7 +1,8 @@
 #include "include/place.h"
 
-Place::Place(int v, Coords c)
+Place::Place(QString n,int v, Coords c)
 {
+    this->name = n;
     this->count = v;
     this->coords = c;
 }
