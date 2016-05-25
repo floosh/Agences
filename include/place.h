@@ -2,6 +2,7 @@
 #define PLACE_H
 
 #include <QStringList>
+#include <QtMath>
 #include "include/coords.h"
 
 class Place
@@ -14,6 +15,8 @@ public:
     QString name;
     int count;
     Coords coords;
+
+    double getDistance(Place&);
 
 };
 

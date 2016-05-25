@@ -17,6 +17,8 @@ public:
     const double costPerCenter = 3000.0;
     const double costPerKm = 0.4;
 
+    double solutionCost();
+
 };
 
 #endif // MODEL_H
