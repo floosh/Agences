@@ -14,11 +14,15 @@ TEMPLATE = app
 
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
-    src/place.cpp
+    src/place.cpp \
+    src/algogenetic.cpp \
+    src/model.cpp
 
 HEADERS  += \
     include/mainwindow.h \
     include/place.h \
-    include/coords.h
+    include/coords.h \
+    include/algogenetic.h \
+    include/model.h
 
 FORMS    += src/mainwindow.ui

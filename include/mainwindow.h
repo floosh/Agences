@@ -5,9 +5,9 @@
 #include <QTextStream>
 #include <QFileDialog>
 #include <QString>
-#include <QVector>
 #include <QDebug>
-#include "include/place.h"
+#include "include/model.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -24,8 +24,7 @@ public:
 private:
 
     Ui::MainWindow *ui;
-    QVector<Place> agencies;
-    QVector<Place> cities;
+    Model* model;
 
     void loadFile(QString url, QVector<Place>);
 

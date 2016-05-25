@@ -6,9 +6,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    loadFile("Ouvrir la liste des villes", cities);
-    loadFile("Ouvrir une liste d'agences", agencies);
+    model = new Model();
+    loadFile("Ouvrir la liste des villes", model->cities);
+    loadFile("Ouvrir une liste d'agences", model->agencies);
 
 
 }
@@ -39,3 +39,5 @@ void MainWindow::loadFile(QString title, QVector<Place> places) {
     }
 
 }
+
+
