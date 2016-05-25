@@ -10,6 +10,9 @@ public:
    Model* model;
    AlgoGenetic(Model*);
 
+   double process();
+   double evaluate();
+
 };
 
 #endif // ALGOGENETIC_H

@@ -7,4 +7,13 @@ AlgoGenetic::AlgoGenetic(Model* m)
 
 double AlgoGenetic::process() {
 
+    // Algo génétique
+    // Initialisation: on pose x centres aléatoirement
+
+
+
+}
+
+double AlgoGenetic::evaluate() {
+
 }
