@@ -16,13 +16,18 @@ SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/place.cpp \
     src/algogenetic.cpp \
-    src/model.cpp
+    src/model.cpp \
+    src/kmeans.cpp \
+    src/recuit.cpp
 
 HEADERS  += \
     include/mainwindow.h \
     include/place.h \
     include/coords.h \
     include/algogenetic.h \
-    include/model.h
+    include/model.h \
+    include/kmeans.h \
+    include/potato.h \
+    include/recuit.h
 
 FORMS    += src/mainwindow.ui
