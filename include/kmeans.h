@@ -6,12 +6,17 @@
 class KMeans
 {
 public:
-    KMeans();
 
-    Model* model;
-    KMeans(Model*);
+    QVector<Place> places;
+
+
+    KMeans();
+    KMeans(QVector<Place>);
 
     double process();
+
+    Coords computeCentre(QVector<Place>);
+    Coords computeCartesianCenter(QVector<Place>);
 
 };
 

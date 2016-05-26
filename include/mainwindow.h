@@ -26,8 +26,7 @@ private:
     Ui::MainWindow *ui;
     Model* model;
 
-    void loadFile(QString url, QVector<Place>);
-
+    void loadFile(QString url, QVector<Place>&);
 };
 
 #endif // MAINWINDOW_H
