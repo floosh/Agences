@@ -29,9 +29,9 @@ Coords KMeans::computeCentre(QVector<Place>) {
     }
 
     double latitude = sumLatitude / coeff;
-    double longitutde = sumLongitude / coeff;
+    double longitude = sumLongitude / coeff;
 
-    return Coord {longitude, latitude};
+    return Coords {longitude, latitude};
 }
 
 /**

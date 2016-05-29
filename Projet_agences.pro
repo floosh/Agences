@@ -5,11 +5,13 @@
 #-------------------------------------------------
 
 QT       += core gui
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+DESTDIR = $$PWD
 
 TARGET = Projet_agences
 TEMPLATE = app
+
 
 
 SOURCES += src/main.cpp \

@@ -3,71 +3,121 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
-  ui->setupUi(this);
-  model = new Model();
-  loadFile("Ouvrir la liste des villes", model->cities);
-  loadFile("Ouvrir une liste d'agences", model->agencies);
+    ui->setupUi(this);
+
+    model = new Model();
+    scene = new QGraphicsScene();
+    ui->graphicsView->setScene(scene);
+
+    QFile places("sample_files/LieuxPossibles.txt");
+    loadFile(model->cities, places);
+    QFile agencies("sample_files/ListeAgences_100.txt");
+    loadFile(model->agencies,agencies);
+
+    updateView();
+
+
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
 void MainWindow::loadFile(QString title, QVector<Place> &places) {
-  QString url =
-      QFileDialog::getOpenFileName(this, title, "", "Text file (*.txt)");
-  QFile fichier(url);
-  fichier.open(QIODevice::ReadOnly | QIODevice::Text);
-  QTextStream stream(&fichier);
+    QString url =
+            QFileDialog::getOpenFileName(this, title, "", "Text file (*.txt)");
+    QFile fichier(url);
+    loadFile(places, fichier);
+}
 
-  //to ignore first line (title of the column)
-  bool firstLine = true;
+void MainWindow::loadFile(QVector<Place> &places, QFile &fichier) {
 
-  while (!stream.atEnd()) {
+    fichier.open(QIODevice::ReadOnly | QIODevice::Text);
+    QTextStream stream(&fichier);
 
-    // read file /o/
-    QString line = stream.readLine();
+    //to ignore first line (title of the column)
+    bool firstLine = true;
+    places.empty();
 
-    if(firstLine) {
-        firstLine = false;
-        continue;
+    while (!stream.atEnd()) {
+
+        // read file /o/
+        QString line = stream.readLine();
+
+        if(firstLine) {
+            firstLine = false;
+            continue;
+        }
+
+        line = line.replace("\"", "");
+        QStringList fields = line.split(";");
+
+        QString name = fields[0];
+        int value = 0;
+        if(fields.length() == 6) //there is also a column for count (agences file)
+            value = fields[5].toInt();
+        Coords coords = {fields[3].toFloat(), fields[4].toFloat()};
+
+        places.push_back(Place(name, value, coords));
+        qDebug() << "loaded: " << fields << endl;
+    }
+}
+
+void MainWindow::drawPlace(Place& p) {
+    int width = 15000, height = 12800;
+    double x = fmod((width*(180+p.coords.longitude)/360), (width +(width/2)));
+
+    // height and width are map height and width
+    double PI = 3.14159265359;
+    double latRad = p.coords.latitude*PI/180;
+
+    // get y value
+    double mercN = log(tan((PI/4)+(latRad/2)));
+    double y = (height/2)-(width*mercN/(2*PI));
+
+    scene->addEllipse(QRect(x-7280,y-3910,p.count +2,p.count+2), QPen(), QBrush(Qt::red) );
+}
+
+void MainWindow::updateView() {
+
+    QImage image("res/france.png");
+
+    if(!image.isNull())
+    {
+        scene->addItem(new QGraphicsPixmapItem(QPixmap::fromImage(image)));
     }
 
-    line = line.replace("\"", "");
-    QStringList fields = line.split(";");
+    for(Place p : model->agencies) {
+        drawPlace(p);
+    }
 
-    QString name = fields[0];
-
-    int value = 0;
-    if(fields.length() == 6) //there is also a column for count (agences file)
-        value = fields[5].toInt();
-    Coords coords = {fields[3].toFloat(), fields[4].toFloat()};
-
-    places.push_back(Place(name, value, coords));
-    qDebug() << "loaded: " << fields << endl;
-  }
+    ui->lblAgences->setText(QStringLiteral("%1 Agence(s)").arg(model->agencies.size()));
+    ui->lblVilles->setText(QStringLiteral("%1 Ville(s)").arg(model->cities.size()));
 }
+
+
 
 /**
  * Barycentre par moyenne latitude et longitude
  * @brief MainWindow::testBarycentre1
  * @param places
  */
+/*
 void MainWindow::testBarycentre1(QVector<Place> places) {
-  double sumLongitude = 0;
-  double sumLatitude = 0;
-  int coeff = 0;
-  for (Place p : places) {
-    sumLongitude += p.count * p.coords.longitude;
-    sumLatitude += p.count * p.coords.latitude;
-    coeff += p.count;
-  }
+    double sumLongitude = 0;
+    double sumLatitude = 0;
+    int coeff = 0;
+    for (Place p : places) {
+        sumLongitude += p.count * p.coords.longitude;
+        sumLatitude += p.count * p.coords.latitude;
+        coeff += p.count;
+    }
 
-  double latitude = sumLatitude / coeff;
-  double longitutde = sumLongitude / coeff;
+    double latitude = sumLatitude / coeff;
+    double longitutde = sumLongitude / coeff;
 
-  qDebug() << "Méthode moyenne des coordonnées" << endl;
-  qDebug() << "latitude : " << latitude << endl;
-  qDebug() << "longitutde : " << longitutde << endl;
-}
+    qDebug() << "Méthode moyenne des coordonnées" << endl;
+    qDebug() << "latitude : " << latitude << endl;
+    qDebug() << "longitutde : " << longitutde << endl;
+}*/
 
 /*void MainWindow::testBarycentre2(QVector<Place> places) {
   double sumX = 0;
@@ -98,3 +148,15 @@ void MainWindow::testBarycentre1(QVector<Place> places) {
   qDebug() << "latitude : " << latFinal << endl;
   qDebug() << "longitutde : " << longFinal << endl;
 }*/
+
+void MainWindow::on_btnAgences_clicked()
+{
+    loadFile("Ouvrir une liste d'agences", model->agencies);
+    updateView();
+}
+
+void MainWindow::on_btnVilles_clicked()
+{
+    loadFile("Ouvrir une liste de villes", model->cities);
+    updateView();
+}
