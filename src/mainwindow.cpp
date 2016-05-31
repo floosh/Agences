@@ -5,6 +5,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
+
     model = new Model();
     scene = new QGraphicsScene();
     ui->graphicsView->setScene(scene);
@@ -21,21 +24,21 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::loadFile(QString title, QVector<Place> &places) {
+void MainWindow::loadFile(QString title, QVector<Place*> &places) {
     QString url =
             QFileDialog::getOpenFileName(this, title, "", "Text file (*.txt)");
     QFile fichier(url);
     loadFile(places, fichier);
 }
 
-void MainWindow::loadFile(QVector<Place> &places, QFile &fichier) {
+void MainWindow::loadFile(QVector<Place*> &places, QFile &fichier) {
 
     fichier.open(QIODevice::ReadOnly | QIODevice::Text);
     QTextStream stream(&fichier);
 
     //to ignore first line (title of the column)
     bool firstLine = true;
-    places.empty();
+    places.clear();
 
     while (!stream.atEnd()) {
 
@@ -56,24 +59,32 @@ void MainWindow::loadFile(QVector<Place> &places, QFile &fichier) {
             value = fields[5].toInt();
         Coords coords = {fields[3].toFloat(), fields[4].toFloat()};
 
-        places.push_back(Place(name, value, coords));
+        Place* p = new Place();
+        p->name = name;
+        p->count = value;
+        p->coords = coords;
+
+        places.push_back(p);
         qDebug() << "loaded: " << fields << endl;
     }
 }
 
-void MainWindow::drawPlace(Place& p) {
+void MainWindow::drawPlace(Place* p, const QColor &color, int size) {
+
+    if(size < 0) size = p->count + 2;
+
     int width = 15000, height = 12800;
-    double x = fmod((width*(180+p.coords.longitude)/360), (width +(width/2)));
+    double x = fmod((width*(180+p->coords.longitude)/360), (width +(width/2)));
 
     // height and width are map height and width
     double PI = 3.14159265359;
-    double latRad = p.coords.latitude*PI/180;
+    double latRad = p->coords.latitude*PI/180;
 
     // get y value
     double mercN = log(tan((PI/4)+(latRad/2)));
     double y = (height/2)-(width*mercN/(2*PI));
 
-    scene->addEllipse(QRect(x-7280,y-3910,p.count +2,p.count+2), QPen(), QBrush(Qt::red) );
+    scene->addEllipse(QRect(x-7280,y-3910,size, size), QPen(), QBrush(color) );
 }
 
 void MainWindow::updateView() {
@@ -85,8 +96,18 @@ void MainWindow::updateView() {
         scene->addItem(new QGraphicsPixmapItem(QPixmap::fromImage(image)));
     }
 
-    for(Place p : model->agencies) {
-        drawPlace(p);
+    if(model->solution.size() == 0) {
+        for(Place* p : model->agencies) {
+            drawPlace(p, Qt::red);
+        }
+    } else {
+        for(Potato* p : model->solution) {
+            QColor c(qrand()%255,qrand()%255,qrand()%255);
+            drawPlace(p->center, c, 20);
+            for(Place* place : p->agencies) {
+                drawPlace(place, c);
+            }
+        }
     }
 
     ui->lblAgences->setText(QStringLiteral("%1 Agence(s)").arg(model->agencies.size()));
@@ -158,5 +179,43 @@ void MainWindow::on_btnAgences_clicked()
 void MainWindow::on_btnVilles_clicked()
 {
     loadFile("Ouvrir une liste de villes", model->cities);
+    updateView();
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    //KMeans k(model);
+    //k.process(200);
+
+    // Création de nb clusters
+    int nb_clusters = 13;
+    model->solution.clear();
+    do {
+        Place* center = model->cities.at(qrand()%model->cities.size());
+        Potato* p = new Potato(center);
+
+        if(!model->solution.contains(p)) {
+            model->solution.push_back(p);
+            nb_clusters --;
+        }
+    } while(nb_clusters > 0);
+
+    // Affectation des agences 'au plus proche'
+    for(Place* a : model->agencies) {
+        for(Potato* p : model->solution) {
+            if( p->getPersonCount() + a->count < model->personsPerCenter) {
+                p->agencies.push_back(a);
+                break;
+            }
+        }
+
+    }
+
+
+    Recuit r(model);
+    r.process(1000);
+
+    model->print();
+
     updateView();
 }

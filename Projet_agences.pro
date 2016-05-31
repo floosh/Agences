@@ -20,7 +20,8 @@ SOURCES += src/main.cpp \
     src/algogenetic.cpp \
     src/model.cpp \
     src/kmeans.cpp \
-    src/recuit.cpp
+    src/recuit.cpp \
+    src/potato.cpp
 
 HEADERS  += \
     include/mainwindow.h \

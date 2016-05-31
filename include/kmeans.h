@@ -1,22 +1,23 @@
 #ifndef KMEANS_H
 #define KMEANS_H
 
+#include <QDebug>
 #include "include/model.h"
 
 class KMeans
 {
 public:
 
-    QVector<Place> places;
+    Model* model;
 
 
     KMeans();
-    KMeans(QVector<Place>);
+    KMeans(Model*);
 
-    double process();
+    double process(int nb_clusters);
+    void iterate();
 
-    Coords computeCentre(QVector<Place>);
-    Coords computeCartesianCenter(QVector<Place>);
+    Coords computeCentre(QVector<Place*>);
 
 };
 
