@@ -213,7 +213,7 @@ void MainWindow::on_pushButton_4_clicked()
 
 
     Recuit r(model);
-    r.process(1000);
+    r.process(2000);
 
     model->print();
 

@@ -34,7 +34,7 @@ double Recuit::process(int iterations) {
 
                 // Nouvelle solution minimale
                 if(new_value < min_value && model->isValidSolution(potatoes)) {
-                    qDebug() << "New solution :" << new_value;
+                    qDebug() << "New solution;" << new_value << ";" << i << ";" << j << ";" << i*100+j;
                     model->solution = potatoes;
                     min_value = cur_value;
                 }
